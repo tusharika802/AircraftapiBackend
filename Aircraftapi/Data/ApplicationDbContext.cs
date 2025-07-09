@@ -1,4 +1,5 @@
 ﻿using Aircraftapi.Models;
+using Aircraftapi.Models.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aircraftapi.Data
@@ -15,5 +16,8 @@ namespace Aircraftapi.Data
         public DbSet<ServiceCentre> ServiceCentres { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Staff> Staffs { get; set; }
+        public DbSet <User> Users { get; set; }
+
+
     }
 }

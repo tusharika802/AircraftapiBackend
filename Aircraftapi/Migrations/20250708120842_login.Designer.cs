@@ -3,6 +3,7 @@ using Aircraftapi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aircraftapi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250708120842_login")]
+    partial class login
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contracts", (string)null);
+                    b.ToTable("Contracts");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.Part", b =>
@@ -56,7 +59,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parts", (string)null);
+                    b.ToTable("Parts");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.Partner", b =>
@@ -72,7 +75,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Partners", (string)null);
+                    b.ToTable("Partners");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.ServiceCentre", b =>
@@ -88,7 +91,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceCentres", (string)null);
+                    b.ToTable("ServiceCentres");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.Staff", b =>
@@ -107,7 +110,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Staffs", (string)null);
+                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.User", b =>
@@ -127,15 +130,12 @@ namespace Aircraftapi.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
