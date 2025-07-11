@@ -19,19 +19,39 @@ namespace AircraftDashboardAPI.Controllers
         }
 
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllContracts()
+        //{
+        //    var contracts = await _context.Contracts.Include(x => x.ContractPartners).ToListAsync();
+        //    var gg = contracts.Select(x => new
+        //    {
+        //        x.Id,
+        //        x.Title,
+        //        x.IsActive,
+        //        ContractPartner = x.ContractPartners.Select(y => new  { y.Id, y.Name, y.ContractId}).ToList()
+        //    });
+
+        //    return Ok(gg);
+        //}
+      
         [HttpGet]
         public async Task<IActionResult> GetAllContracts()
         {
-            var contracts = await _context.Contracts.Include(x => x.ContractPartners).ToListAsync();
-            var gg = contracts.Select(x => new
+            var contracts = await _context.Contracts
+                .Include(x => x.ContractPartners)
+                .ToListAsync();
+
+            var result = contracts.Select(x => new
             {
                 x.Id,
                 x.Title,
                 x.IsActive,
-                Value = x.ContractPartners.Select(y => new  { y.Id, y.Name, y.ContractId }).ToList()
+                ContractPartner = x.ContractPartners.Any()
+                    ? string.Join(", ", x.ContractPartners.Select(p => p.Name))
+                    : string.Empty
             });
 
-            return Ok(gg);
+            return Ok(result);
         }
 
 
