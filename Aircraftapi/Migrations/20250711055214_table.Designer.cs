@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aircraftapi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250708120842_login")]
-    partial class login
+    [Migration("20250711055214_table")]
+    partial class table
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,10 +70,15 @@ namespace Aircraftapi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
 
                     b.ToTable("Partners");
                 });
@@ -130,12 +135,34 @@ namespace Aircraftapi.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("ProfileImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Aircraftapi.Models.Partner", b =>
+                {
+                    b.HasOne("Aircraftapi.Models.Contract", "Contract")
+                        .WithMany("ContractPartners")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+                });
+
+            modelBuilder.Entity("Aircraftapi.Models.Contract", b =>
+                {
+                    b.Navigation("ContractPartners");
                 });
 #pragma warning restore 612, 618
         }

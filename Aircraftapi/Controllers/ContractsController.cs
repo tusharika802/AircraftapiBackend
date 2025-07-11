@@ -22,8 +22,16 @@ namespace AircraftDashboardAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllContracts()
         {
-            var contracts = await _context.Contracts.ToListAsync();
-            return Ok(contracts);
+            var contracts = await _context.Contracts.Include(x => x.ContractPartners).ToListAsync();
+            var gg = contracts.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.IsActive,
+                Value = x.ContractPartners.Select(y => new  { y.Id, y.Name, y.ContractId }).ToList()
+            });
+
+            return Ok(gg);
         }
 
 

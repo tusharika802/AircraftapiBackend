@@ -37,7 +37,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contracts", (string)null);
+                    b.ToTable("Contracts");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.Part", b =>
@@ -56,7 +56,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parts", (string)null);
+                    b.ToTable("Parts");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.Partner", b =>
@@ -67,12 +67,17 @@ namespace Aircraftapi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Partners", (string)null);
+                    b.HasIndex("ContractId");
+
+                    b.ToTable("Partners");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.ServiceCentre", b =>
@@ -88,7 +93,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceCentres", (string)null);
+                    b.ToTable("ServiceCentres");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.Staff", b =>
@@ -107,7 +112,7 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Staffs", (string)null);
+                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("Aircraftapi.Models.User", b =>
@@ -127,6 +132,9 @@ namespace Aircraftapi.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("ProfileImagePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
@@ -135,7 +143,23 @@ namespace Aircraftapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Aircraftapi.Models.Partner", b =>
+                {
+                    b.HasOne("Aircraftapi.Models.Contract", "Contract")
+                        .WithMany("ContractPartners")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+                });
+
+            modelBuilder.Entity("Aircraftapi.Models.Contract", b =>
+                {
+                    b.Navigation("ContractPartners");
                 });
 #pragma warning restore 612, 618
         }

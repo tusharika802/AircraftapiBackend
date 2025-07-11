@@ -25,32 +25,81 @@ namespace Aircraftapi.Controllers
             _config = config;
         }
 
-        // Register
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto dto)
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
         {
-            if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
-                return BadRequest("Username already exists.");
-
-            CreatePasswordHash(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            var user = new User
-            {
-                Username = dto.Username,
-                Email = dto.Email,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                Role=dto.Role
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Registration successful" });
+            var users = await _context.Users.ToListAsync();
+            return Ok(users);
         }
 
-        // Login
-        [HttpPost("login")]
+        // Register
+
+        [HttpPost("register")]
+            public async Task<IActionResult> Register([FromForm] RegisterDto dto)
+            {
+                if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
+                    return BadRequest("Username already exists.");
+
+                CreatePasswordHash(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+                string imagePath = null;
+                if (dto.ProfileImage != null && dto.ProfileImage.Length > 0)
+                {
+                    // Set folder path
+                    var folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfileImages");
+                    Directory.CreateDirectory(folder); // Ensure folder exists
+
+                    // Save file with unique name
+                    var fileName = Guid.NewGuid() + Path.GetExtension(dto.ProfileImage.FileName);
+                    var filePath = Path.Combine(folder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await dto.ProfileImage.CopyToAsync(stream);
+                    }
+
+                    imagePath = Path.Combine("ProfileImages", fileName); // Relative path
+                }
+
+                var user = new User
+                {
+                    Username = dto.Username,
+                    Email = dto.Email,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                    Role = dto.Role,
+                    ProfileImagePath = imagePath
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Registration successful" });
+            }
+
+            //    if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
+            //        return BadRequest("Username already exists.");
+
+            //    CreatePasswordHash(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            //    var user = new User
+            //    {
+            //        Username = dto.Username,
+            //        Email = dto.Email,
+            //        PasswordHash = passwordHash,
+            //        PasswordSalt = passwordSalt,
+            //        Role=dto.Role,
+
+            //    };
+
+            //    _context.Users.Add(user);
+            //    await _context.SaveChangesAsync();
+
+            //    return Ok(new { message = "Registration successful" });
+            //}
+
+            // Login
+            [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
@@ -58,7 +107,15 @@ namespace Aircraftapi.Controllers
                 return Unauthorized("Invalid credentials");
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            return Ok(new
+            {
+                token,
+                username = user.Username,
+                profileImage = string.IsNullOrEmpty(user.ProfileImagePath)
+        ? null
+        : $"{Request.Scheme}://{Request.Host}/{user.ProfileImagePath.Replace("\\", "/")}"
+            });
+
         }
 
         // Generate JWT Token

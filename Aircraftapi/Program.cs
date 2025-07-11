@@ -84,9 +84,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseCors("AllowAngularApp");
-
 app.UseAuthentication(); // ?? Must come before UseAuthorization
 app.UseAuthorization();
 
