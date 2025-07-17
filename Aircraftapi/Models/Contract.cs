@@ -8,13 +8,8 @@ namespace Aircraftapi.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public bool IsActive { get; set; }
-        [AllowNull]
-        public ICollection<Partner> ContractPartners { get; set; } = [];
+        public string PartnerIds { get; set; }
 
-        [NotMapped]
-        public string PartnerNames =>
-            ContractPartners != null && ContractPartners.Any()
-                ? string.Join(", ", ContractPartners.Select(p => p.Name))
-                : string.Empty;
+
     }
 }

@@ -1,4 +1,6 @@
+using Aircraftapi;
 using Aircraftapi.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -72,7 +74,9 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.Configure<EmailSettings>
+    (builder.Configuration.GetSection("EmailSettings"));
 var app = builder.Build();
 
 // ?? Middleware

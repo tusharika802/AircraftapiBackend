@@ -77,28 +77,6 @@ namespace Aircraftapi.Controllers
                 return Ok(new { message = "Registration successful" });
             }
 
-            //    if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
-            //        return BadRequest("Username already exists.");
-
-            //    CreatePasswordHash(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            //    var user = new User
-            //    {
-            //        Username = dto.Username,
-            //        Email = dto.Email,
-            //        PasswordHash = passwordHash,
-            //        PasswordSalt = passwordSalt,
-            //        Role=dto.Role,
-
-            //    };
-
-            //    _context.Users.Add(user);
-            //    await _context.SaveChangesAsync();
-
-            //    return Ok(new { message = "Registration successful" });
-            //}
-
-            // Login
             [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
@@ -118,7 +96,7 @@ namespace Aircraftapi.Controllers
 
         }
 
-        // Generate JWT Token
+  
         private string GenerateJwtToken(User user)
         {
             var claims = new[]
