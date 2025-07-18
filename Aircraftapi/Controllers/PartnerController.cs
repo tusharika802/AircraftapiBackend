@@ -9,8 +9,6 @@ namespace Aircraftapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "admin")]
-
     public class PartnerController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -31,31 +29,7 @@ namespace Aircraftapi.Controllers
             var count = await _context.Partners.CountAsync();
             return Ok(count);
         }
-        //// ➕ Add partner
-        //[HttpPost("add")]
-        //public async Task<IActionResult> AddPartner([FromBody] Partner partner)
-        //{
-        //    _context.Partners.Add(partner);
-        //    await _context.SaveChangesAsync();
-        //    return Ok(partner);
-        //}
-
-        //[HttpPost("add")]
-        //public async Task<IActionResult> AddPartner([FromBody] Partner partner)
-        //{
-        //    // If contractId is 0 or invalid, treat it as null
-        //    if (partner.ContractId == 0)
-        //        partner.ContractId = null;
-
-        //    _context.Partners.Add(partner);
-        //    await _context.SaveChangesAsync();
-
-        //    var result = await _context.Partners
-        //        .Include(p => p.Contract)
-        //        .FirstOrDefaultAsync(p => p.Id == partner.Id);
-
-        //    return Ok(result);
-        //}
+       
         [HttpPost("add")]
         public async Task<IActionResult> AddPartner([FromBody] Partner partner)
         {
@@ -64,8 +38,6 @@ namespace Aircraftapi.Controllers
             return Ok(partner);
         }
 
-
-        // ✏️ Edit partner
         [HttpPut("edit")]
         public async Task<IActionResult> EditPartner(int id, [FromBody] Partner partner)
         {
@@ -78,7 +50,6 @@ namespace Aircraftapi.Controllers
             return Ok(existing);
         }
 
-        // ❌ Delete partner
         [HttpDelete("delete")]
         public async Task<IActionResult> DeletePartner(int id)
         {

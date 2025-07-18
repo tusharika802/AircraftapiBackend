@@ -32,7 +32,6 @@ namespace Aircraftapi.Controllers
             return Ok(users);
         }
 
-        // Register
 
         [HttpPost("register")]
             public async Task<IActionResult> Register([FromForm] RegisterDto dto)
@@ -45,11 +44,10 @@ namespace Aircraftapi.Controllers
                 string imagePath = null;
                 if (dto.ProfileImage != null && dto.ProfileImage.Length > 0)
                 {
-                    // Set folder path
+               
                     var folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfileImages");
-                    Directory.CreateDirectory(folder); // Ensure folder exists
+                    Directory.CreateDirectory(folder); 
 
-                    // Save file with unique name
                     var fileName = Guid.NewGuid() + Path.GetExtension(dto.ProfileImage.FileName);
                     var filePath = Path.Combine(folder, fileName);
 

@@ -49,7 +49,7 @@ namespace AircraftDashboardAPI.Controllers
                     contract.Id,
                     contract.Title,
                     contract.IsActive,
-                    PartnerIds = contract.PartnerIds ?? "",
+                    PartnerIds = string.Join(", ", ids),
                     PartnerNames = string.Join(", ", partnerNames)
                 };
             });
@@ -70,12 +70,11 @@ namespace AircraftDashboardAPI.Controllers
             if (dto == null || string.IsNullOrWhiteSpace(dto.Title))
                 return BadRequest("Invalid contract data");
 
-            // Convert comma-separated string to List<int>
-            var partnerIdList = dto.PartnerIds?
+            var partnerIdList = dto.PartnerIds
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(id => int.TryParse(id, out var parsedId) ? parsedId : -1)
                 .Where(id => id != -1)
-                .ToList() ?? new List<int>();
+                .ToList();
 
             if (partnerIdList.Count == 0)
                 return BadRequest("No valid partner IDs provided.");
@@ -88,6 +87,7 @@ namespace AircraftDashboardAPI.Controllers
                 return BadRequest("One or more selected partners do not exist.");
 
             string partnerIdStr = string.Join(",", validPartners.Select(p => p.Id));
+            var partnerNames = validPartners.Select(p => p.Name).ToList();
 
             var contract = new Contract
             {
@@ -99,14 +99,12 @@ namespace AircraftDashboardAPI.Controllers
             _context.Contracts.Add(contract);
             await _context.SaveChangesAsync();
 
-            // Email Notification
-            var allPartnerNames = validPartners.Select(p => p.Name).ToList();
-
+            // Send email to each partner
             foreach (var partner in validPartners)
             {
                 if (!string.IsNullOrEmpty(partner.Email))
                 {
-                    var otherPartners = allPartnerNames
+                    var otherPartners = partnerNames
                         .Where(name => name != partner.Name)
                         .ToList();
 
@@ -126,7 +124,15 @@ namespace AircraftDashboardAPI.Controllers
                 }
             }
 
-            return Ok(contract);
+            // ✅ Return contract with PartnerNames
+            return Ok(new
+            {
+                contract.Id,
+                contract.Title,
+                contract.IsActive,
+                PartnerIds = partnerIdStr,
+                PartnerNames = string.Join(", ", partnerNames)
+            });
         }
 
         [HttpPut("edit/{id}")]
